@@ -104,9 +104,21 @@ function saveBase64Image(base64Str, filepath) {
     // 等待一会儿确保最后的懒加载完成
     await new Promise(r => setTimeout(r, 2000));
 
-    // 提取所有图片 src
+    // 提取指定容器内的图片 src
     const imageUrls = await page.evaluate(() => {
-        const images = Array.from(document.querySelectorAll('img'));
+        // 根据用户指示，查找 data-testid="send_message" 下的图片
+        const containers = Array.from(document.querySelectorAll('[data-testid="send_message"]'));
+        // 同时也尝试查找包含 message 的 data-testid，以防万一
+        // const containers = Array.from(document.querySelectorAll('[data-testid*="message"]')); 
+        
+        console.log(`Found ${containers.length} containers with data-testid="send_message"`);
+        
+        const images = [];
+        containers.forEach(container => {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            images.push(...imgs);
+        });
+
         return images.map(img => ({
             src: img.src,
             width: img.naturalWidth,
