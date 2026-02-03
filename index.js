@@ -4,15 +4,27 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 
-const targetUrl = 'https://www.doubao.com/thread/wd309c3f94053d863';
-const baseDir = '/Users/wolffy/Desktop/personal/doubaoimage/images';
+// 读取配置文件
+const configPath = path.join(__dirname, 'config.json');
+let config = {
+    targetUrl: 'https://www.doubao.com/thread/wd309c3f94053d863',
+    cookie: ''
+};
 
-// !!! 重要：请在此处填入您的 Cookie !!!
-// 1. 在浏览器登录 Doubao 并打开该页面
-// 2. 按 F12 打开开发者工具 -> 网络(Network)
-// 3. 刷新页面，点击第一个请求
-// 4. 复制 "Request Headers" 中的 "cookie" 值粘贴到下面
-const COOKIE = ''; 
+if (fs.existsSync(configPath)) {
+    try {
+        const fileContent = fs.readFileSync(configPath, 'utf8');
+        const userConfig = JSON.parse(fileContent);
+        config = { ...config, ...userConfig };
+        console.log('Loaded config from config.json');
+    } catch (e) {
+        console.error('Failed to parse config.json:', e.message);
+    }
+}
+
+const targetUrl = config.targetUrl;
+const COOKIE = config.cookie;
+const baseDir = '/Users/wolffy/Desktop/personal/doubaoimage/images';
 
 // 获取当前日期 YYYY-MM-DD
 function getTodayDate() {
