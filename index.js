@@ -26,6 +26,21 @@ const targetUrl = config.targetUrl;
 const COOKIE = config.cookie;
 const baseDir = '/Users/wolffy/Desktop/personal/doubaoimage/images';
 
+// 获取 targetUrl 的最后一项作为目录名
+function getUrlSlug(url) {
+    try {
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        // 移除末尾的斜杠（如果有）
+        const cleanPath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+        // 获取最后一部分
+        const slug = cleanPath.split('/').pop();
+        return slug || 'unknown';
+    } catch (e) {
+        return 'unknown';
+    }
+}
+
 // 获取当前日期 YYYY-MM-DD
 function getTodayDate() {
     const date = new Date();
@@ -74,8 +89,9 @@ function saveBase64Image(base64Str, filepath) {
 
 (async () => {
     // 确保目录存在
-    const today = getTodayDate();
-    const saveDir = path.join(baseDir, today);
+    const slug = getUrlSlug(targetUrl);
+    console.log(`Saving images to directory: ${slug}`);
+    const saveDir = path.join(baseDir, slug);
     if (!fs.existsSync(saveDir)) {
         fs.mkdirSync(saveDir, { recursive: true });
     }
