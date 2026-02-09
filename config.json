@@ -1,4 +1,14 @@
 {
-    "targetUrl": "https://www.doubao.com/thread/wd309c3f94053d863",
+    "targetUrls": [],
+    "history": [
+        {
+            "url": "https://www.doubao.com/thread/wd309c3f94053d863",
+            "timestamp": "2026-02-04T01:53:07.087Z"
+        },
+        {
+            "url": "https://www.doubao.com/thread/w355dc65774091489",
+            "timestamp": "2026-02-04T02:05:26.957Z"
+        }
+    ],
     "cookie": ""
 }

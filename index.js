@@ -7,7 +7,8 @@ const http = require('http');
 // 读取配置文件
 const configPath = path.join(__dirname, 'config.json');
 let config = {
-    targetUrl: 'https://www.doubao.com/thread/wd309c3f94053d863',
+    targetUrls: [],
+    history: [],
     cookie: ''
 };
 
@@ -22,7 +23,12 @@ if (fs.existsSync(configPath)) {
     }
 }
 
-const targetUrl = config.targetUrl;
+if (!config.targetUrls || config.targetUrls.length === 0) {
+    console.log('No target URLs found in config.json');
+    process.exit(0);
+}
+
+const targetUrl = config.targetUrls[0];
 const COOKIE = config.cookie;
 const baseDir = '/Users/wolffy/Desktop/personal/doubaoimage/images';
 
@@ -214,6 +220,23 @@ function saveBase64Image(base64Str, filepath) {
     console.log(`Success! Saved ${count} images to ${saveDir}`);
 
     await browser.close();
+
+    // 更新配置文件
+    if (config.targetUrls && config.targetUrls.length > 0) {
+        const processedUrl = config.targetUrls.shift();
+        if (!config.history) config.history = [];
+        config.history.push({
+            url: processedUrl,
+            timestamp: new Date().toISOString()
+        });
+
+        try {
+            fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
+            console.log('Updated config.json: moved URL to history.');
+        } catch (e) {
+            console.error('Failed to update config.json:', e.message);
+        }
+    }
 })();
 
 async function autoScroll(page){
